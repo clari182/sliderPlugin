@@ -8,6 +8,15 @@
         }
     });
 
+    var defaults = {
+        //GENERAL
+        loop: true,
+        timer: 5000,
+        auto: true,
+        arrows: true,
+        bullets: true
+}
+
     $.fn.slider = function(options, el) {
 
         var self = el;
@@ -15,29 +24,30 @@
 
         self.init = function() {
 
-            self.settings = $.extend({
-                loop: true,
-                timer: 5000,
-                auto: true
-            }, options );
+            self.settings = $.extend({}, defaults, options );
 
-            self.currentLi = 0;
+            self.currentNode = 0;
 
-            $(self).find('.content li').eq(self.currentLi).addClass('active');
-            $(self).find('.bullets li').eq(self.currentLi).addClass('active');
+            $(self).find('.content li').eq(self.currentNode).addClass('active');
+            $(self).find('.bullets li').eq(self.currentNode).addClass('active');
+            
+            if (!self.settings.arrows) $(self).find('.module_slider_py').addClass('no-arrows');
+            if (!self.settings.bullets) $(self).find('.module_slider_py').addClass('no-bullets');
+            
             self.liCount = Math.ceil($(self).find('.content li').length);
+
             if (self.liCount < 2) {
                 $(self).find('.module_slider_py').addClass('no-bullets').addClass('no-arrows');
             }
             
             $(self).find( ".arrow_slider.left" ).click(function(e) {
-                self.moveToPrevious();
+                self.moveLeft();
                 e.preventDefault();
                 
             });
 
             $(self).find( ".arrow_slider.right" ).click(function(e) {
-                self.moveToNext();
+                self.moveRight();
                 e.preventDefault();
             });  
 
@@ -45,46 +55,45 @@
                 var parent = $(this).parent();
                 if(!parent.hasClass('active')){
                     var index = parent.index();
-                    self.activateLi(index);
+                    self.activateNode(index);
                 }
                 e.preventDefault();
             });
 
-            if(self.settings.auto)
-                self.startTimer(self.moveToNext, self.settings.timer);      	
+            if(self.settings.auto) self.startTimer(self.moveRight, self.settings.timer);      	
         }
         
-        self.activateLi = function(eq){
-            self.currentLi = eq;
+        self.activateNode = function(eq){
+            self.currentNode = eq;
             $(self).find('li').removeClass('active');
             $(self).find('.content li').eq(eq).addClass('active');
             $(self).find('.bullets li').eq(eq).addClass('active');
             clearInterval(self.timer);
             if(self.settings.auto)
-                self.startTimer(self.moveToNext, self.settings.timer); 
+                self.startTimer(self.moveRight, self.settings.timer); 
         }
 
-        self.moveToPrevious = function() {
+        self.moveLeft = function() {
             if (self.liCount > 1) {
                 //If it's on the first element and wants to go to last
-                if (self.currentLi === 0 && self.settings.loop === true) { //Only if loop is enabled
-                    self.currentLi = self.liCount - 1;
-                } else if (self.currentLi != 0) {
-                    self.currentLi--;
+                if (self.currentNode === 0 && self.settings.loop === true) { //Only if loop is enabled
+                    self.currentNode = self.liCount - 1;
+                } else if (self.currentNode != 0) {
+                    self.currentNode--;
                 }
-                self.activateLi(self.currentLi);                        
+                self.activateNode(self.currentNode);                        
             }
         }
 
-        self.moveToNext = function(){
+        self.moveRight = function(){
             if (self.liCount > 1) {
                 //If it's on the last element and wants to go to first
-                if (self.currentLi === self.liCount - 1 && self.settings.loop === true) { //Only if loop is enabled
-                    self.currentLi = 0;
-                } else if (self.currentLi != self.liCount - 1) {
-                    self.currentLi++;
+                if (self.currentNode === self.liCount - 1 && self.settings.loop === true) { //Only if loop is enabled
+                    self.currentNode = 0;
+                } else if (self.currentNode != self.liCount - 1) {
+                    self.currentNode++;
                 }
-                self.activateLi(self.currentLi);                                        
+                self.activateNode(self.currentNode);                                        
             }
         }
 
