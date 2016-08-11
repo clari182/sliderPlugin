@@ -3,7 +3,17 @@
     $(document).ready(function(){
         if ($('.slider_content').length > 0) {
             $('.slider_content').each(function(index, el){
-                $(el).slider(null, el);
+                $(el).slider(el);
+            });
+        }
+        if ($('.slider_content_no_loop').length > 0) {
+            $('.slider_content_no_loop').each(function(index, el){
+                $(el).slider(el, {loop: false});
+            });
+        }
+        if ($('.slider_content_no_auto').length > 0) {
+            $('.slider_content_no_auto').each(function(index, el){
+                $(el).slider(el, {auto: false});
             });
         }
     });
@@ -17,7 +27,7 @@
         bullets: true
 }
 
-    $.fn.slider = function(options, el) {
+    $.fn.slider = function(el, options) {
 
         var self = el;
         self.settings = {};
